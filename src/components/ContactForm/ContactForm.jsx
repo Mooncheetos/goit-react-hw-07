@@ -4,7 +4,7 @@ import * as Yup from 'yup';
 import { nanoid } from 'nanoid';
 import { useId } from "react";
 import { useDispatch } from "react-redux";
-import { addContact } from "../../redux/contactsSlice";
+import { addContact } from "../../redux/contactsOps";
 import css from './ContactForm.module.css';
 
 function ContactForm() {
@@ -13,12 +13,11 @@ function ContactForm() {
         number:"",
     };
     const dispatch = useDispatch();
-    const onAddContact = (formData) => {
-        const newContact = { ...formData, id: nanoid() };
-        dispatch(addContact(newContact));
+    const onAddContact = (formData) => {        
+        dispatch(addContact(formData));
     };
 
-    const validationSchema = Yup.object().shape({
+    const FeedbackSchema = Yup.object().shape({
         name: Yup.string()
             .min(3, 'Name must be at least 3 characters')
             .max(50, 'Name must be less than 50 characters')
@@ -40,17 +39,17 @@ function ContactForm() {
     return (
         <Formik
             initialValues={initialValues}
-            validationSchema={validationSchema}
+            validationSchema={FeedbackSchema}
             onSubmit={handleSubmit}
         >
             <Form className={css.form}>
                 <label className={css.formTitle} htmlFor={nameId}>Name:</label>
                 <Field className={css.formInput} id={nameId} name="name" type="text" />
-                <ErrorMessage name="name" component="div" className={css.errorMassage} />
+                <ErrorMessage name="name" component="span" className={css.errorMassage} />
 
                 <label className={css.formTitle} htmlFor={numberId}>Number:</label>
-                <Field className={css.formInput} id={numberId} name="number" type="text" />
-                <ErrorMessage name="number" component="div" className={css.errorMassage} />
+                <Field className={css.formInput} id={numberId} name="number" type="tel" />
+                <ErrorMessage name="number" component="span" className={css.errorMassage} />
 
                 <button className={css.formBtn} type="submit">Add contact</button>
             </Form>
